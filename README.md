@@ -1,6 +1,4 @@
-# Project Title
-
-CheckList
+# CheckList
 
 ## Description
 
@@ -28,4 +26,4 @@ This project can be improved by:
 
 ## Authors
 
-* **Candice Gomes**
+**Candice Gomes**
