@@ -1,0 +1,63 @@
+﻿@page "{recordId}"
+@model CheckList.Pages.EditModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+}
+<h2>
+    Edit description of item in the checklist.
+</h2>
+<br />
+<div class="row">
+    <div asp-validation-summary="All"></div>
+    <input asp-for="@Model.Record.id" type="hidden" />
+    <div>
+        <div>
+            Description: <input asp-for="@Model.Record.fields.Description" />
+        </div>
+    </div>
+</div>
+<br/>
+<div class="row">
+
+    <div class="col-sm-2">
+        <input type="submit" onclick="javacript:EditRecord()" value="Update" /></div>
+        <div class="col-sm-2">
+            <input type="submit" onclick="location.href = '/index'" value="Cancel" />
+        </div>
+@section Scripts
+{
+
+    <script type="text/javascript" src="../../lib/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="../../lib/airtable.browser.js"></script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+        });
+        function EditRecord() {
+            var Description = $("#Record_fields_Description").val();
+            var Airtable = require('airtable');
+            var base = new Airtable({ apiKey: 'keynRLAU0he1laXga' }).base('app8mbWFlYecob4zb');
+            base('ShoppingList').update([
+                {
+                    "id": '@Model.Record.id',
+                    "fields": {
+                        "Description": Description
+                    }
+                }
+            ], function (err, records) {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+                records.forEach(function (record) {
+                    console.log(record.get('Description'));
+                });
+            });
+            window.location = "/index"
+        }
+    </script>
+
+}

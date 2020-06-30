@@ -1,0 +1,103 @@
+﻿@page "{handler?}"
+@model CheckList.Pages.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+}
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<div class="container">
+    <h2>@Model.Title</h2>
+    <div class="row">
+        <form method="post">
+            <p>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <h4>Completed</h4>
+                    </div>
+                    <div class="col-md-3">
+                        <h4>Description</h4>
+                    </div>
+                    <div class="col-md-3">
+                        <h4>Edit</h4>
+                    </div>
+                    <div class="col-md-3">
+                        <h4>Delete</h4>
+                    </div>
+                </div>
+                @foreach (IndexModel.Record record in Model.FullList)
+                {
+                    <div class="row">
+                        <div class="col-md-3">
+                            @Html.CheckBoxFor(x => record.fields.Completed, new { id = record.id, @class = "checkbox" })
+                        </div>
+                        <div class="col-md-3">
+                            @record.fields.Description
+                        </div>
+                        <div class="col-md-3">
+                            <a asp-page="/Edit" asp-route-recordId="@record.id"><span class="glyphicon glyphicon-edit"></span></a>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" asp-page-handler="Delete" method="post" asp-route-id="@record.id"><span class="glyphicon glyphicon-trash"></span></button>
+                        </div>
+                    </div>
+
+                }
+
+
+            </p>
+        </form>
+    </div>
+    <div class="row"><input type="submit" onclick="location.href = '/create'" value="Create New Item" /></div>
+</div>
+@section Styles {
+    <style>
+        .row{
+            display: block;
+        }
+    </style>
+}
+@section Scripts
+{
+
+    <script type="text/javascript" src="./lib/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="./lib/airtable.browser.js"></script>
+    <script type="text/javascript">$(document).ready(function () {
+            $.ajaxSetup({ cache: false });
+            $(document).on("change", "input[name='record.fields.Completed']", function (e) {
+                var Airtable = require('airtable');
+                var base = new Airtable({ apiKey: 'keynRLAU0he1laXga' }).base('app8mbWFlYecob4zb');
+
+                base('ShoppingList').update([
+                    {
+                        "id": e.target.id,
+                        "fields": {
+                            "Completed":  String($("#" + e.target.id).prop('checked'))
+                        }
+                    }
+                ], function (err, records) {
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
+                    records.forEach(function (record) {
+                        console.log(record.get('Description'));
+                    });
+                });
+            });
+        });</script>
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
